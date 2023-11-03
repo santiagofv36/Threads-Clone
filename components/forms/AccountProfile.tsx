@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,6 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
+import { updateUser } from "@/lib/actions/user.actions";
+import { usePathname, useRouter } from "next/navigation";
 
 interface AccountProfileProps {
   user: {
@@ -37,6 +38,8 @@ interface AccountProfileProps {
 const AccountProfile = ({ user, btnTitle }: AccountProfileProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("media");
+  const pathname = usePathname();
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(userSchema),
@@ -61,7 +64,20 @@ const AccountProfile = ({ user, btnTitle }: AccountProfileProps) => {
       }
     }
 
-    //TODO: Update user data calling the API
+    await updateUser({
+      userId: user.id,
+      username: values.username,
+      name: values.name,
+      bio: values.bio,
+      image: values.profilePhoto,
+      path: pathname,
+    });
+
+    if (pathname === "/profile/edit") {
+      router.back();
+    } else {
+      router.push("/");
+    }
   };
 
   const handleImage = (
@@ -128,6 +144,7 @@ const AccountProfile = ({ user, btnTitle }: AccountProfileProps) => {
                   onChange={(e) => handleImage(e, field.onChange)}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -146,6 +163,7 @@ const AccountProfile = ({ user, btnTitle }: AccountProfileProps) => {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -164,6 +182,7 @@ const AccountProfile = ({ user, btnTitle }: AccountProfileProps) => {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
