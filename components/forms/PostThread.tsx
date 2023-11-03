@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
 
 import { threadSchema } from "@/lib/validations/thread";
 
@@ -38,10 +37,10 @@ const PostThread = ({ userId }: { userId: string }) => {
 
   const onSumbit = async (values: z.infer<typeof threadSchema>) => {
     await CreateThread({
-        text: values.thread,
-        author: userId,
-        path: pathname,
-        communityId: null,
+      text: values.thread,
+      author: userId,
+      path: pathname,
+      communityId: null,
     });
     router.push("/");
   };
@@ -76,4 +75,3 @@ const PostThread = ({ userId }: { userId: string }) => {
 };
 
 export default PostThread;
-
